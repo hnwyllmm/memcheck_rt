@@ -1,0 +1,102 @@
+#include <signal.h>
+
+#include <sys/types.h>
+
+#include <unistd.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <pthread.h>
+
+void new_op(int,siginfo_t*,void*);
+
+void *func(void *) 
+{
+	printf("new thread %lu\n", pthread_self() ) ;
+	sleep(10) ;
+return NULL ;
+}
+int main(int argc,char**argv)
+
+{
+
+	pthread_t tid ;
+	pthread_create(&tid, NULL, func, NULL) ;
+	printf("main thread info %lu\n", pthread_self());
+        struct sigaction act;  
+
+        union sigval mysigval;
+
+        int i;
+
+        int sig;
+
+        pid_t pid;         
+
+        char data[10];
+
+        memset(data,0,sizeof(data));
+
+        for(i=0;i < 5;i++)
+
+                data[i]='2';
+
+        mysigval.sival_ptr=data;
+
+       
+
+//        sig=atoi(argv[1]);
+
+        pid=getpid();
+
+       
+
+        sigemptyset(&act.sa_mask);
+
+        act.sa_sigaction=new_op;//三参数信号处理函数
+
+        act.sa_flags=SA_SIGINFO;//信息传递开关，允许传说参数信息给new_op
+		for (int i = 1; i < 28; i++)
+		{
+
+				if(sigaction(i,&act,NULL) < 0)
+
+				{
+
+						printf("install sigal error\n");
+
+				}
+		}
+
+        while(1)
+
+        {
+
+                sleep(2);
+
+                printf("wait for the signal\n");
+
+                sigqueue(pid,sig,mysigval);//向本进程发送信号，并传递附加信息
+
+        }
+
+}
+
+void new_op(int signum,siginfo_t *info,void *myact)//三参数信号处理函数的实现
+
+{
+	printf("pthread info %lu\n", pthread_self() ) ;
+
+        int i;
+
+        for(i=0;i<10;i++)
+
+        {
+
+                printf("%c\n ",(*( (char*)((*info).si_ptr)+i)));
+
+        }
+
+        printf("handle signal %d over;",signum);
+
+}

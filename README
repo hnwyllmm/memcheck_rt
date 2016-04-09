@@ -1,0 +1,19 @@
+use for Linux(GCC)
+GLIBC version must larger than 2.1
+(backtrace(), backtrace_symbols(), and backtrace_symbols_fd() are provided in glibc since version 2.1.)
+
+how to use libmemcheck_rt.so:
+LD_PRELOAD="libmemcheck_rt.so" a.out
+
+record memory alloc information:
+rise a signal to `libmemcheck_rt.so` to record memory alloc information before the process exit
+example:
+> ps -ef | grep memcheck
+hnwyllmm  1775  1397  0 10:54 pts/1    00:00:00 ./memcheck_rt_thread.test
+
+> kill -16 1775
+
+signal number can be configured in environment variable named `RT_ENV_SIGNO`
+
+record file can be configred in environment variable named `RT_ENV_FILE`
+
