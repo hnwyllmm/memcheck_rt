@@ -13,8 +13,10 @@ LD_PRELOAD="libmemcheck_rt.so" a.out
 向进程发送信号
 示例:
 > ps -ef | grep memcheck
+
 hnwyllmm  1775  1397  0 10:54 pts/1    00:00:00 ./memcheck_rt_thread.test
 
 > kill -16 1775
+
 默认信号是16，可以通过环境变量`RT_ENV_SIGNO`来配置。
 记录文件可以通过`RT_ENV_FILE`来配置。
